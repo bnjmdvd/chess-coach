@@ -6,6 +6,7 @@ import { nextNewLesson, pickPractice, planSession, type SessionPlan } from '../l
 import { getData, logToday, streak, todayKey, update, useData } from '../state/store';
 import { sound } from '../ui/sound';
 import type { Nav } from '../App';
+import { plural } from '../ui/plural';
 
 type Phase = 'overview' | 'warmup' | 'lesson' | 'practice' | 'recap';
 const ORDER: Phase[] = ['overview', 'warmup', 'lesson', 'practice', 'recap'];
@@ -46,9 +47,9 @@ export function SessionView({ nav }: { nav: Nav }) {
 
   if (phase === 'overview') {
     const items = [
-      { on: plan.reviews.length > 0, title: 'Warm-up review', text: `${plan.reviews.length} questions from earlier lessons, mixed together. Recalling before you learn something new strengthens memory.` },
+      { on: plan.reviews.length > 0, title: 'Warm-up review', text: `${plural(plan.reviews.length, 'question')} from earlier lessons, mixed together. Recalling before you learn something new strengthens memory.` },
       { on: !!lesson, title: plan.lessonMode === 'retry' ? 'Re-master a lesson' : 'New lesson', text: lesson ? `${lesson.title}: ${lesson.objective}` : '' },
-      { on: plan.practiceCount > 0, title: 'Practice', text: `${plan.practiceCount} fresh exercises mixing today's lesson with earlier topics.` },
+      { on: plan.practiceCount > 0, title: 'Practice', text: `${plural(plan.practiceCount, 'fresh exercise')} mixing today's lesson with earlier topics.` },
       { on: true, title: 'Recap', text: 'What you did, what\'s next, and when to come back.' },
     ].filter((x) => x.on);
     return (

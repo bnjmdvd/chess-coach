@@ -4,6 +4,7 @@ import { allLessons } from '../content';
 import { cardsOfLesson, dueCards, interleave, lessonStrength, shuffle } from '../state/srs';
 import { getData, useData } from '../state/store';
 import type { Nav } from '../App';
+import { plural } from '../ui/plural';
 
 const DAY = 86_400_000;
 
@@ -55,7 +56,7 @@ export function ReviewView({ nav }: { nav: Nav }) {
         </div>
       )}
       <div className="card">
-        <h2>{due.length ? `${due.length} reviews due` : 'All caught up ✓'}</h2>
+        <h2>{due.length ? `${plural(due.length, 'review')} due` : 'All caught up ✓'}</h2>
         <p className="muted">
           Reviews come back at growing intervals: 1 day, 3 days, a week, a month… Each time you recall something just before forgetting it, it lasts longer.
         </p>

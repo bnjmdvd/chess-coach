@@ -4,6 +4,7 @@ import { planSession } from '../learn/session';
 import { dueCards } from '../state/srs';
 import { exportData, lastBackup, streak, todayKey, update, useData } from '../state/store';
 import type { Nav } from '../App';
+import { plural } from '../ui/plural';
 
 const isSafari = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
 
@@ -73,9 +74,9 @@ export function HomeView({ nav }: { nav: Nav }) {
           <>
             <h1>{inProgress ? 'Pick up where you left off' : plan.catchUp ? 'Catch-up session' : 'Your session for today'}</h1>
             <ul className="plan-mini">
-              {plan.reviews.length > 0 && <li>↻ Warm-up: {plan.reviews.length} reviews</li>}
+              {plan.reviews.length > 0 && <li>↻ Warm-up: {plural(plan.reviews.length, 'review')}</li>}
               {nextLesson && <li>♞ {plan.lessonMode === 'retry' ? 'Re-master' : 'New lesson'}: <strong>{nextLesson.title}</strong> <span className="muted">({unitOfLesson.get(nextLesson.id)?.title})</span></li>}
-              {plan.practiceCount > 0 && <li>✎ Practice: {plan.practiceCount} exercises</li>}
+              {plan.practiceCount > 0 && <li>✎ Practice: {plural(plan.practiceCount, 'exercise')}</li>}
               {!nextLesson && !plan.catchUp && <li>🎓 You've completed every lesson. Sessions now focus on reviews and practice.</li>}
             </ul>
             <div className="actions">

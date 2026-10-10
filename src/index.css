@@ -334,3 +334,4 @@ textarea { width: 100%; font: inherit; padding: 10px; border-radius: 10px; borde
 /* ---------- settings ---------- */
 .toggle { display: flex; gap: 8px; align-items: center; margin: 10px 0; }
 .credits { margin-top: 28px; }
+.card > h3:first-child, .card > h2:first-child, .card > h1:first-child { margin-top: 0; }
