@@ -355,6 +355,8 @@ function Game({ initial, onNew }: { initial: Saved; onNew: () => void }) {
 
 function MoveList({ history, reviews, onPick, current }: { history: string[]; reviews: MoveReview[]; onPick?: (ply: number) => void; current: number | null }) {
   const byPly = new Map(reviews.map((r) => [r.ply, r]));
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (current === null && box.current) box.current.scrollTop = box.current.scrollHeight; }, [history.length, current]);
   const rows = [];
   for (let i = 0; i < history.length; i += 2) {
     const cell = (ply: number) => {
@@ -368,5 +370,5 @@ function MoveList({ history, reviews, onPick, current }: { history: string[]; re
     };
     rows.push(<div className="mv-row" key={i}><span className="mv-n">{i / 2 + 1}.</span>{cell(i)}{cell(i + 1)}</div>);
   }
-  return <div className="movelist">{rows.length ? rows : <span className="muted small">No moves yet.</span>}</div>;
+  return <div className="movelist" ref={box}>{rows.length ? rows : <span className="muted small">No moves yet.</span>}</div>;
 }

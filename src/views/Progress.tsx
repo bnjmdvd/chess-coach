@@ -3,6 +3,7 @@ import { lessonStrength } from '../state/srs';
 import { streak, todayKey, useData } from '../state/store';
 import { LEVELS } from '../chess/engine';
 import type { Nav } from '../App';
+import { plural } from '../ui/plural';
 
 export function ProgressView({ nav }: { nav: Nav }) {
   const data = useData();
@@ -64,7 +65,7 @@ export function ProgressView({ nav }: { nav: Nav }) {
           <p className="muted">No games yet. <button className="link" onClick={() => nav('play')}>Play your first game</button></p>
         ) : (
           <>
-            <p>{data.games.length} games · {wins} wins · current level: <strong>{LEVELS[data.prefs.engineLevel - 1]?.name}</strong></p>
+            <p>{plural(data.games.length, 'game')} · {plural(wins, 'win')} · current level: <strong>{LEVELS[data.prefs.engineLevel - 1]?.name}</strong></p>
             <p className="muted small">Blunders per game (last 10): {data.games.slice(-10).map((g) => g.blunders).join(' · ')}. The goal is to watch this number shrink.</p>
           </>
         )}

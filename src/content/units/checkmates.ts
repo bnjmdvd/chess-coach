@@ -102,7 +102,7 @@ export const checkmatesUnit: Unit = {
           hints: ['Your knight on f6 covers g8 and h7.', 'The rook can check on h7, protected by the knight.'],
           explanation: 'Rh7# works because the knight protects the rook and also covers g8. Rook and knight make a deadly team.',
           wrong: {
-            'Ra8+': 'Check, but the rook on b8 captures your rook.',
+            Ra8: 'The black rook on b8 blocks the 8th rank, so this is not even check, and the rook simply captures yours.',
           },
           puzzle: true,
           theme: 'mate-in-1',

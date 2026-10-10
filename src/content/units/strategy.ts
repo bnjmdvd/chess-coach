@@ -52,6 +52,22 @@ const TWO_KNIGHTS = 'r1bqkb1r/pppp1ppp/2n2n2/4p1N1/2B1P3/8/PPPP1PPP/RNBQK2R b KQ
 /** Legal's trap position: 1.e4 e5 2.Nf3 d6 3.Bc4 Bg4 4.Nc3 g6 5.Nxe5 */
 const LEGAL_5 = 'rn1qkbnr/ppp2p1p/3p2p1/4N3/2B1P1b1/2N5/PPPP1PPP/R1BQK2R b KQkq - 0 5';
 
+/** London System: the black knight on c6 runs into d4 */
+const LONDON = 'r2q1rk1/pb3ppp/1pnbpn2/2ppN3/3P1P2/2PBP1B1/PP1N2PP/R2QK2R b KQ - 0 10';
+/** Modern Benoni: White's knight can head for c4 */
+const BENONI = 'r1bqr1k1/p1n2pbp/1p1p1np1/2pP4/P3P3/2N2P2/1P1NB1PP/R1BQ1RK1 w - - 0 13';
+/** Caro-Kann Exchange: the e-file is half-open for White */
+const CARO_EXCH = 'r4rk1/pp3ppp/2nqpn2/3p4/3P2b1/1QPB1N2/PP1N1PPP/R4RK1 w - - 2 12';
+/** Exchange French, White has a rook on e1 */
+const EXCH_FRENCH_C = 'r4rk1/ppqn1ppp/2pb1n2/3p2B1/3P2b1/2PB1N2/PPQN1PPP/4RRK1 b - - 3 11';
+const ROOK_7TH_C = '1r4k1/p4pp1/4p2p/8/8/4PP2/P4P1P/2R3K1 w - - 0 1';
+/** Italian Game: 1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.c3 Nf6 5.d4 exd4 6.e5 */
+const ITALIAN_E5 = 'r1bqk2r/pppp1ppp/2n2n2/2b1P3/2Bp4/2P2N2/PP3PPP/RNBQK2R b KQkq - 0 6';
+/** Italian Game, slow line: Black still has to castle */
+const ITALIAN_BLACK = 'r1bqk2r/bpp2ppp/p1np1n2/4p3/4P3/1BPP1N2/PP3PPP/RNBQR1K1 b kq - 3 8';
+/** 1.e4 e5 2.Nf3 Nc6 3.Bc4 Nd4 */
+const BLACKBURNE = 'r1bqkbnr/pppp1ppp/8/4p3/2BnP3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4';
+
 const FILE = (f: string) => [1, 2, 3, 4, 5, 6, 7, 8].map((r) => f + r);
 
 // ---------------------------------------------------------------------------
@@ -253,15 +269,16 @@ const howToThink: Lesson = {
     },
     {
       type: 'move',
-      fen: TWO_KNIGHTS,
+      fen: ITALIAN_E5,
       orientation: 'black',
-      prompt: 'Black to move. White\'s last move was Ng5. Deal with the threat.',
+      prompt: 'Black to move. White just played e5, attacking your knight. Find the strongest answer.',
       solution: ['d5'],
-      hints: ['Which square are the knight and bishop both aiming at?'],
+      hints: ['Instead of just retreating, strike back in the center.', 'A pawn move attacks the bishop on c4 and opens your c8-bishop.'],
       wrong: {
-        h6: 'Nxf7 forks your queen and rook.',
+        Nh5: 'The knight is stuck on the edge there. Look for a counterattack in the center.',
+        Qe7: 'This leaves the knight hanging: exf6.',
       },
-      explanation: '...d5 blocks the c4-bishop\'s path to f7, so Nxf7 no longer works well.',
+      explanation: '...d5! attacks the bishop on c4. If exf6, ...dxc4 wins the piece back. Answering a threat with a stronger threat is often best.',
     },
     {
       type: 'choice',
@@ -391,14 +408,12 @@ const pieceActivity: Lesson = {
     },
     {
       type: 'move',
-      fen: ITALIAN_SLOW,
-      prompt: 'White to move. Start improving your worst piece: the knight on d2. Head for g3.',
-      solution: ['Nf1'],
-      hints: ['The knight needs a stepping stone between d2 and g3.'],
-      wrong: {
-        Nc4: 'On c4 the knight can be chased by ...b5, and it still blocks nothing useful. Aim for g3 via f1.',
-      },
-      explanation: 'Nf1 clears the way for the c1-bishop and the queen, and next Ng3 puts the knight on an active square near the center and the king.',
+      fen: LONDON,
+      orientation: 'black',
+      prompt: 'Black to move. Your knight on c6 runs into White\'s rock-solid d4 pawn. Start rerouting it toward f5.',
+      solution: ['Ne7'],
+      hints: ['Which square is a stepping stone between c6 and f5?'],
+      explanation: '...Ne7 heads for f5, where the knight will hit the e3 pawn and the bishop on g3 instead of biting on d4.',
     },
     {
       type: 'squares',
@@ -421,21 +436,22 @@ const pieceActivity: Lesson = {
   practice: [
     {
       type: 'move',
-      fen: RUY_NA5,
-      orientation: 'black',
-      prompt: 'Black to move. Improve the piece that stands on the edge of the board.',
-      solution: ['Nc6'],
-      hints: ['The knight on a5 controls very few squares.'],
-      explanation: 'Nc6 brings the knight back to the center, where it attacks d4 and guards e5.',
+      fen: ITALIAN_SLOW,
+      prompt: 'White to move. Start improving your worst piece: the knight on d2. Head for g3.',
+      solution: ['Nf1'],
+      hints: ['The knight needs a stepping stone between d2 and g3.'],
+      wrong: {
+        Nc4: 'On c4 the knight can be chased by ...b5. Aim for g3 via f1.',
+      },
+      explanation: 'Nf1 clears the way for the c1-bishop and the queen, and next Ng3 puts the knight on an active square.',
     },
     {
       type: 'move',
-      fen: FRENCH_NE7,
-      orientation: 'black',
-      prompt: 'Black to move. Find an active square for the knight on e7.',
-      solution: ['Nf5'],
-      hints: ['Look for a square where the knight attacks a white pawn.'],
-      explanation: 'From f5 the knight piles up on d4 together with the c6-knight and the queen, and the f8-bishop is free again.',
+      fen: BENONI,
+      prompt: 'White to move. Your knight on d2 is passive. Bring it to a square where it attacks Black\'s weak d6 pawn.',
+      solution: ['Nc4'],
+      hints: ['Which square is one jump from d2 and attacks d6?'],
+      explanation: 'On c4 the knight attacks d6 and eyes b6 and e5. It is much more active than on d2.',
     },
     {
       type: 'choice',
@@ -602,20 +618,20 @@ const openFiles: Lesson = {
   practice: [
     {
       type: 'move',
-      fen: EXCH_FRENCH,
-      prompt: 'White to move. Claim the open file with a rook.',
-      solution: ['Rae1'],
-      accept: ['Rfe1'],
-      explanation: 'A rook on e1 controls the open e-file. Rooks are strongest on open files.',
+      fen: CARO_EXCH,
+      prompt: 'White to move. The e-file is half-open for you. Put a rook on it.',
+      solution: ['Rfe1'],
+      accept: ['Rae1'],
+      explanation: 'A rook on e1 presses against the e6 pawn along the half-open file.',
     },
     {
       type: 'move',
-      fen: EXCH_FRENCH_B,
+      fen: EXCH_FRENCH_C,
       orientation: 'black',
-      prompt: 'Black to move. Contest the open file.',
-      solution: ['Rfe8'],
-      accept: ['Rae8'],
-      explanation: 'By putting a rook on e8, Black stops White from owning the e-file.',
+      prompt: 'Black to move. White has a rook on the open e-file. Contest it.',
+      solution: ['Rae8'],
+      accept: ['Rfe8'],
+      explanation: 'With a rook on e8, Black fights for the open file instead of handing it to White.',
     },
     {
       type: 'squares',
@@ -626,12 +642,13 @@ const openFiles: Lesson = {
       explanation: 'Black has no e-pawn, so the e-file is half-open for Black. The e3 pawn is the target.',
     },
     {
-      type: 'move',
-      fen: TWO_ROOKS,
-      prompt: 'White to move. Use an open file to reach the 7th rank.',
-      solution: ['Re7'],
-      accept: ['Rd7'],
-      explanation: 'On the 7th rank your rook attacks the pawns on b7 and f7.',
+      type: 'choice',
+      prompt: 'You have a rook on an open file and your other rook is still at home. What is usually a strong idea?',
+      options: [
+        { text: 'Double the rooks on the open file', correct: true, feedback: 'Yes. Two rooks on one open file are twice as strong and hard to stop.' },
+        { text: 'Keep the second rook in the corner', feedback: 'A rook in the corner does nothing. Bring it to the open file too.' },
+        { text: 'Push the pawns in front of your king to make room', feedback: 'That weakens your king. Use the open file instead.' },
+      ],
     },
   ],
   reflect: 'Why is a rook on an open file stronger than a rook behind its own pawns?',
@@ -931,11 +948,15 @@ const outposts: Lesson = {
       explanation: 'No black pawn can ever attack d4, so it is a perfect home for a white piece.',
     },
     {
-      type: 'move',
+      type: 'choice',
+      prompt: 'Black to move. Which square will White try to use as an outpost for a knight?',
       fen: NAJDORF,
-      prompt: 'White to move. Plant a knight on the outpost.',
-      solution: ['Nd5'],
-      explanation: 'No black pawn can attack d5. The knight is safe there for the rest of the game.',
+      orientation: 'black',
+      options: [
+        { text: 'd5', correct: true, feedback: 'Yes. With no c-pawn and the e-pawn on e5, Black can never attack d5 with a pawn. Black must guard it with pieces.' },
+        { text: 'f5', feedback: 'Black can still answer a knight on f5 with ...g6. A true outpost can never be attacked by a pawn.' },
+        { text: 'b5', feedback: 'The a6 pawn already controls b5.' },
+      ],
     },
     {
       type: 'move',
@@ -965,18 +986,22 @@ const outposts: Lesson = {
       explanation: 'Black\'s c-pawn is gone and the e-pawn is on e5, so no black pawn can ever attack d5.',
     },
     {
-      type: 'move',
-      fen: SVESHNIKOV,
-      prompt: 'White to move. Find the strong knight move.',
-      solution: ['Nd5'],
-      explanation: 'Nd5 occupies the hole on d5. No black pawn can ever attack it there.',
+      type: 'squares',
+      prompt: 'Black to move. White has an isolated d-pawn. Click the outpost square where Black\'s knight already stands guard.',
+      fen: IQP_WHITE,
+      orientation: 'black',
+      answer: ['d5'],
+      mode: 'one',
+      explanation: 'd5 is right in front of the isolated pawn. No white pawn can ever attack it, so the knight is safe there.',
     },
     {
-      type: 'move',
-      fen: IQP_BLACK_2,
-      prompt: 'White to move. Blockade the isolated pawn with a knight.',
-      solution: ['Nd4'],
-      explanation: 'The d4 square in front of the isolated d5 pawn is a perfect outpost.',
+      type: 'choice',
+      prompt: 'In a Sicilian, Black has pawns on d6 and e7, and White has a knight that could jump to d5. Is d5 an outpost for White?',
+      options: [
+        { text: 'Not yet: Black can still play ...e6 to attack d5', correct: true, feedback: 'Right. A square is only an outpost if no enemy pawn can ever attack it.' },
+        { text: 'Yes, any central square is an outpost', feedback: 'An outpost must be safe from enemy pawns. The e7 pawn can still go to e6.' },
+        { text: 'Yes, because knights are always strong on d5', feedback: 'Strong, maybe, but not an outpost while ...e6 can kick it.' },
+      ],
     },
     {
       type: 'choice',
@@ -1005,6 +1030,14 @@ const kingSafety: Lesson = {
         'Every move of those pawns opens a door. Move them only for a good reason.',
       fen: ITALIAN_OO,
       highlights: ['f2', 'g2', 'h2', 'f7', 'g7', 'h7'],
+    },
+    {
+      type: 'squares',
+      prompt: 'Click the three pawns that form **Black\'s** pawn shield.',
+      fen: ITALIAN_OO,
+      answer: ['f7', 'g7', 'h7'],
+      mode: 'all',
+      explanation: 'The f7, g7 and h7 pawns stand in front of Black\'s castled king and keep it safe.',
     },
     {
       type: 'choice',
@@ -1119,11 +1152,12 @@ const kingSafety: Lesson = {
   practice: [
     {
       type: 'move',
-      fen: ITALIAN_CASTLE,
-      prompt: 'White to move. The center is open. Make your king safe.',
+      fen: ITALIAN_BLACK,
+      orientation: 'black',
+      prompt: 'Black to move. White has castled and put a rook on e1. Bring your king to safety.',
       solution: ['O-O'],
       goal: 'castle',
-      explanation: 'With open lines in the center, the king belongs behind its pawn shield.',
+      explanation: 'Castling tucks the king away before White can open the center, and brings the rook toward the middle.',
     },
     {
       type: 'choice',
@@ -1132,6 +1166,15 @@ const kingSafety: Lesson = {
         { text: 'h3 (or ...h6 for Black)', correct: true, feedback: 'Yes. This "luft" stops back-rank mates and only slightly loosens the shield.' },
         { text: 'g4 (or ...g5)', feedback: 'This tears open the pawn shield.' },
         { text: 'f3 and g4 together', feedback: 'That leaves big holes around your king.' },
+      ],
+    },
+    {
+      type: 'choice',
+      prompt: 'White has castled kingside. Which pawn setup in front of the king is the **safest**?',
+      options: [
+        { text: 'f2, g2, h2 (unmoved)', correct: true, feedback: 'Yes. Unmoved pawns leave no holes next to the king. (Later, h3 for luft is usually fine too.)' },
+        { text: 'f2, g4, h3', feedback: 'The g-pawn on g4 leaves f3 and h3 holes and opens lines toward the king.' },
+        { text: 'f4, g4, h4', feedback: 'All three pawns pushed: the king has almost no cover left.' },
       ],
     },
     {
@@ -1234,11 +1277,11 @@ const makingAPlan: Lesson = {
     },
     {
       type: 'move',
-      fen: ROOK_7TH_A,
-      prompt: 'White to move. Pick the plan: use your open file and play its first move.',
-      solution: ['Rd7'],
+      fen: ROOK_7TH_C,
+      prompt: 'White to move. You own the open c-file. Pick the plan and play its first move.',
+      solution: ['Rc7'],
       hints: ['Where is a rook strongest?'],
-      explanation: 'The rook on the 7th rank attacks b7 and f7 and keeps Black passive. A clear plan beats random moves.',
+      explanation: 'The rook on the 7th rank attacks a7 and f7 and keeps Black passive. A clear plan beats random moves.',
     },
   ],
   keyIdeas: [
@@ -1288,20 +1331,34 @@ const makingAPlan: Lesson = {
   ],
   practice: [
     {
-      type: 'move',
-      fen: KID,
-      prompt: 'White to move. Play the first move of the queenside plan.',
-      solution: ['b4'],
-      accept: ['Rb1', 'a3'],
-      explanation: 'b4 prepares c5, attacking Black\'s pawn chain at its base.',
+      type: 'choice',
+      prompt: 'White to move. White has an isolated d-pawn but very active pieces. What is a good plan?',
+      fen: IQP_WHITE,
+      options: [
+        { text: 'Use the active pieces to attack now, before the pawn becomes a weakness in an endgame', correct: true, feedback: 'Yes. The isolated pawn gives space and open lines; use them while the pieces are on.' },
+        { text: 'Trade as many pieces as possible', feedback: 'That helps Black: in an endgame the isolated pawn is just a weakness.' },
+        { text: 'Move the king to the center', feedback: 'With queens on the board the king belongs in safety, not in the center.' },
+      ],
     },
     {
       type: 'move',
+      fen: QGD_EXCH,
+      prompt: 'White to move. White\'s plan is the "minority attack": push the b-pawn to b5 to break up Black\'s c6-d5 pawns. Prepare it (b4 right now would drop the pawn to ...Bxb4).',
+      solution: ['Rab1'],
+      accept: ['a3'],
+      hints: ['Support the b-pawn before you push it.'],
+      explanation: 'Rab1 (or a3) supports b4 and b5. Then the advance creates a weak pawn on c6 or d5 for White to attack.',
+    },
+    {
+      type: 'choice',
+      prompt: 'Black to move. In this French Defence structure, White\'s pawn chain is d4-e5. Where should Black attack it?',
       fen: FRENCH_NE7,
       orientation: 'black',
-      prompt: 'Black to move. The plan is to pile up on d4. Bring another piece to attack it.',
-      solution: ['Nf5'],
-      explanation: 'Nf5 adds a third attacker on d4, with the c6-knight and the b6-queen.',
+      options: [
+        { text: 'At its base, the d4 pawn, with pieces like ...Nf5 and ...Qb6', correct: true, feedback: 'Yes. Attack a pawn chain at its base: d4 is defended only by pieces.' },
+        { text: 'At its head, the e5 pawn, with ...Ng6 only', feedback: 'e5 is well protected by d4. Hitting the base, d4, is more effective.' },
+        { text: 'On the kingside with ...g5 and ...h5', feedback: 'That weakens Black\'s own king. The target is d4.' },
+      ],
     },
     {
       type: 'choice',
@@ -1376,6 +1433,16 @@ const learningFromGames: Lesson = {
       orientation: 'black',
     },
     {
+      type: 'squares',
+      prompt: 'Black to move. Do the blunder check Black skipped: imagine ...Bxd1. On which square would White then give check? Click it.',
+      fen: LEGAL_5,
+      orientation: 'black',
+      answer: ['f7'],
+      mode: 'one',
+      hints: ['Look at the white bishop on c4.'],
+      explanation: 'After ...Bxd1, Bxf7+ is check, and Nd5# follows. One look at White\'s checks would have saved the game.',
+    },
+    {
       type: 'move',
       fen: LEGAL_5,
       orientation: 'black',
@@ -1406,6 +1473,16 @@ const learningFromGames: Lesson = {
         { text: 'No plan', feedback: 'The problem was more concrete: Black missed White\'s mating threat.' },
         { text: 'Hanging piece', feedback: 'Black didn\'t leave a piece hanging; Black walked into a mate.' },
       ],
+    },
+    {
+      type: 'move',
+      fen: 'rn1qkb2/p4pp1/1p2p1Nr/1N1p1n1p/3P4/6B1/PPP1QPPP/R3K2R w KQq - 6 14',
+      prompt: 'Review time: in this game White played a slow move here and missed a win. White to move: find what White missed.',
+      solution: ['Nc7+', 'Kd7', 'Nxf8+', 'Qxf8', 'Nxa8'],
+      hints: ['Look for a knight check that also attacks a rook.'],
+      explanation: 'Nc7+ forks the king and the rook on a8. After ...Kd7, Nxf8+ grabs a bishop with check first, and then Nxa8 wins the rook. Label: a missed tactic.',
+      puzzle: true,
+      theme: 'fork',
     },
     {
       type: 'explain',
@@ -1458,15 +1535,15 @@ const learningFromGames: Lesson = {
     },
     {
       type: 'move',
-      fen: LEGAL_5,
-      orientation: 'black',
-      prompt: 'Black to move. In the game, Black grabbed the queen and got mated. Find a safe move instead.',
-      solution: ['dxe5'],
-      accept: ['Be6'],
+      fen: BLACKBURNE,
+      prompt: 'White to move. In this game White played Nxe5, grabbing a pawn, and ran into trouble. Find a good move instead.',
+      solution: ['Nxd4'],
+      accept: ['O-O', 'Nc3'],
+      hints: ['Before grabbing e5, look at Black\'s replies: ...Qg5 would attack e5 and g2.', 'Simply trade off the annoying knight on d4.'],
       wrong: {
-        Bxd1: 'Bxf7+ Ke7 Nd5# is checkmate.',
+        Nxe5: 'That was the game move. After ...Qg5, Black attacks your knight on e5 and the g2 pawn at once.',
       },
-      explanation: '...dxe5 takes the knight. Black loses a pawn after Qxg4, but avoids the mate.',
+      explanation: 'Nxd4 removes the knight on d4, and after ...exd4 White castles with a nice lead in development. Castling or Nc3 are also good.',
     },
     {
       type: 'choice',
@@ -1504,6 +1581,15 @@ const learningFromGames: Lesson = {
         { text: 'One clear lesson, like "check their checks before grabbing material"', correct: true, feedback: 'Yes. One concrete lesson per game adds up fast.' },
         { text: 'Only the result', feedback: 'The result doesn\'t teach you anything. The lesson does.' },
         { text: 'A list of every move', feedback: 'The app already saves the moves. Write the lesson.' },
+      ],
+    },
+    {
+      type: 'choice',
+      prompt: 'While reviewing, you find a move where you had a winning fork and didn\'t see it. Which label fits?',
+      options: [
+        { text: 'Missed tactic', correct: true, feedback: 'Yes. More tactics puzzles will train your eye for it.' },
+        { text: 'Missed threat', feedback: 'A missed threat is about your opponent\'s idea. Here you missed your own win.' },
+        { text: 'Hanging piece', feedback: 'Nothing of yours was hanging. You missed a chance to win material.' },
       ],
     },
     {

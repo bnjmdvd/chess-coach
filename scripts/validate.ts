@@ -120,11 +120,16 @@ async function checkStep(step: Step, where: string, inCheckpoint: boolean) {
       if (!step.explanation) warn(where, 'missing explanation');
       if (step.piece && !c.get(step.piece as never)) err(where, `piece square ${step.piece} is empty`);
       const start = c.fen();
-      for (const a of step.accept ?? []) if (!tryMove(new Chess(start), a)) err(where, `illegal accept move ${a}`);
+      for (const a of step.accept ?? []) {
+        const m = tryMove(new Chess(start), a);
+        if (!m) err(where, `illegal accept move ${a}`);
+        else if (m.san !== a) err(where, `accept move "${a}" must be written "${m.san}" (it would never match)`);
+      }
       for (const w of Object.keys(step.wrong ?? {})) {
         const t = new Chess(start);
         const m = tryMove(t, w);
         if (!m) err(where, `illegal 'wrong' move ${w}`);
+        else if (m.san !== w) err(where, `'wrong' move "${w}" must be written "${m.san}" (it would never match)`);
         else if (judgeMove(step, 0, m, t) !== 'wrong') err(where, `'wrong' move ${w} would be accepted as correct`);
       }
       for (let ply = 0; ply < step.solution.length; ply++) {

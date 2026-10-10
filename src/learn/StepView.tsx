@@ -297,7 +297,7 @@ function MoveView({ step, mode, onDone, header, continueLabel }: StepProps & { s
       <Rich text={step.prompt} className="prompt" />
       <FeedbackBox fb={fb} />
       <Actions>
-        {!solved && <button className="btn ghost" onClick={onHint} disabled={locked}>{hintLevel > hints.length ? 'Show the move' : 'Hint'}</button>}
+        {!solved && !revealed && <button className="btn ghost" onClick={onHint} disabled={locked}>{hintLevel > hints.length ? 'Show the move' : 'Hint'}</button>}
         {solved && (
           <button className="btn primary" autoFocus onClick={() => onDone({ correct: !revealed, mistakes, hints: hintLevel, ms: elapsed() })}>
             {continueLabel ?? 'Continue'}

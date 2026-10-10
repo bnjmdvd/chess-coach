@@ -734,7 +734,7 @@ export const safetyUnit: Unit = {
           fen: 'r1bqkbnr/pp1p1ppp/2n5/4p3/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 0 5',
           prompt: 'White to move. Save your knight.',
           solution: ['Nb5'],
-          accept: ['Nf3', 'Nb3', 'Nxc6', 'Nde2', 'Nf5'],
+          accept: ['Nf3', 'Nb3', 'Nxc6', 'Ne2', 'Nf5'],
           explanation: 'The knight escapes the pawn attack. Moving away is the right way to meet an attack by a cheaper piece.',
           wrong: {
             c3: 'Defending doesn\'t help against a pawn: ...exd4 wins your knight for a pawn.',
