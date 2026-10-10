@@ -1,0 +1,10 @@
+{
+  "name": "Chess Coach",
+  "short_name": "Chess Coach",
+  "description": "Learn chess from zero, one short session a day.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f4ef",
+  "theme_color": "#2f7d4f",
+  "icons": [{ "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }]
+}
